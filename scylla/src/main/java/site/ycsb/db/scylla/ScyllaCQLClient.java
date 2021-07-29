@@ -549,6 +549,7 @@ public class ScyllaCQLClient extends DB {
         // Add key
         insertStmt.value(YCSB_KEY, QueryBuilder.bindMarker());
 
+
         // Add fields
         for (String field : fields) {
           insertStmt.value(field, QueryBuilder.bindMarker());
@@ -591,6 +592,7 @@ public class ScyllaCQLClient extends DB {
 
       return Status.OK;
     } catch (Exception e) {
+      System.err.println(e);
       LOGGER.error(MessageFormatter.format("Error inserting key: {}", key).getMessage(), e);
     }
 
