@@ -54,6 +54,9 @@ public class ScyllaCQLClient extends DB {
   private static Cluster cluster = null;
   private static Session session = null;
 
+
+  private static final String COUNTER_KEY_TO_INCREMENT = "view_counter";
+
   private static final ConcurrentMap<Set<String>, PreparedStatement> READ_STMTS = new ConcurrentHashMap<>();
   private static final ConcurrentMap<Set<String>, PreparedStatement> SCAN_STMTS = new ConcurrentHashMap<>();
   private static final ConcurrentMap<Set<String>, PreparedStatement> INSERT_STMTS = new ConcurrentHashMap<>();
@@ -61,6 +64,7 @@ public class ScyllaCQLClient extends DB {
   private static final AtomicReference<PreparedStatement> READ_ALL_STMT = new AtomicReference<>();
   private static final AtomicReference<PreparedStatement> SCAN_ALL_STMT = new AtomicReference<>();
   private static final AtomicReference<PreparedStatement> DELETE_STMT = new AtomicReference<>();
+
 
   private static ConsistencyLevel readConsistencyLevel = ConsistencyLevel.QUORUM;
   private static ConsistencyLevel writeConsistencyLevel = ConsistencyLevel.QUORUM;
@@ -142,7 +146,7 @@ public class ScyllaCQLClient extends DB {
         String password = getProperties().getProperty(PASSWORD_PROPERTY);
 
         //getProperties().getProperty(KEYSPACE_PROPERTY, KEYSPACE_PROPERTY_DEFAULT);
-        String keyspace = "pets_clinic_one";
+        String keyspace = "experimental_counters";
 
         readConsistencyLevel = ConsistencyLevel.valueOf(
             getProperties().getProperty(READ_CONSISTENCY_LEVEL_PROPERTY, READ_CONSISTENCY_LEVEL_PROPERTY_DEFAULT));
@@ -467,7 +471,7 @@ public class ScyllaCQLClient extends DB {
   public Status update(String table, String key, Map<String, ByteIterator> values) {
 
     try {
-      Set<String> fields = values.keySet();
+      /*Set<String> fields = values.keySet();
       PreparedStatement stmt = UPDATE_STMTS.get(fields);
 
       // Prepare statement on demand
@@ -516,7 +520,11 @@ public class ScyllaCQLClient extends DB {
       // Add key
       boundStmt.setString(vars.size() - 1, key);
 
-      session.execute(boundStmt);
+      session.execute(boundStmt);*/
+
+      Statement query = QueryBuilder.update("experimental_counters_table")
+                            .with(incr(COUNTER_KEY_TO_INCREMENT, 1)) // Use incr for counters
+                            .where(eq("counter_key", key));
 
       return Status.OK;
     } catch (Exception e) {
@@ -596,10 +604,9 @@ public class ScyllaCQLClient extends DB {
 
       */
 
-      Statement query =
-          QueryBuilder.update("pet_type_count_one")
-              .with(incr("pet_counter", 1)) // Use incr for counters
-              .where(eq("pet_type", "dog"));
+      Statement query = QueryBuilder.update("experimental_counters_table")
+                                    .with(incr(COUNTER_KEY_TO_INCREMENT, 1)) // Use incr for counters
+                                    .where(eq("counter_key", key));
 
       session.execute(query);
 
