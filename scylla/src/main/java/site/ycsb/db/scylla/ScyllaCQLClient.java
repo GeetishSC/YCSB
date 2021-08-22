@@ -41,6 +41,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 
+import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.incr;
+
 /**
  * Scylla DB implementation.
  */
@@ -138,7 +141,8 @@ public class ScyllaCQLClient extends DB {
         String username = getProperties().getProperty(USERNAME_PROPERTY);
         String password = getProperties().getProperty(PASSWORD_PROPERTY);
 
-        String keyspace = getProperties().getProperty(KEYSPACE_PROPERTY, KEYSPACE_PROPERTY_DEFAULT);
+        //getProperties().getProperty(KEYSPACE_PROPERTY, KEYSPACE_PROPERTY_DEFAULT);
+        String keyspace = "pets_clinic_one";
 
         readConsistencyLevel = ConsistencyLevel.valueOf(
             getProperties().getProperty(READ_CONSISTENCY_LEVEL_PROPERTY, READ_CONSISTENCY_LEVEL_PROPERTY_DEFAULT));
@@ -539,6 +543,7 @@ public class ScyllaCQLClient extends DB {
   public Status insert(String table, String key, Map<String, ByteIterator> values) {
 
     try {
+      /*
       Set<String> fields = values.keySet();
       PreparedStatement stmt = INSERT_STMTS.get(fields);
 
@@ -588,6 +593,15 @@ public class ScyllaCQLClient extends DB {
       }
 
       session.execute(boundStmt);
+
+      */
+
+      Statement query =
+          QueryBuilder.update("pet_type_count_one")
+              .with(incr("pet_counter", 1)) // Use incr for counters
+              .where(eq("pet_type", "dog"));
+
+      session.execute(query);
 
       return Status.OK;
     } catch (Exception e) {
