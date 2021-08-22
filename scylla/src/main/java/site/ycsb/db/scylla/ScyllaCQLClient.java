@@ -526,6 +526,8 @@ public class ScyllaCQLClient extends DB {
                             .with(incr(COUNTER_KEY_TO_INCREMENT, 1)) // Use incr for counters
                             .where(eq("counter_key", key));
 
+      session.execute(query);
+
       return Status.OK;
     } catch (Exception e) {
       LOGGER.error(MessageFormatter.format("Error updating key: {}", key).getMessage(), e);
