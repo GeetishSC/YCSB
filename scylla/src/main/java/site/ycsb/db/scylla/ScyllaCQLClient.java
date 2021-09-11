@@ -592,7 +592,7 @@ public class ScyllaCQLClient extends DB {
 
       return Status.OK;
     } catch (Exception e) {
-      System.err.println(e);
+      System.err.println("Error Inserting - Custom"+e.getMessage());
       LOGGER.error(MessageFormatter.format("Error inserting key: {}", key).getMessage(), e);
     }
 
