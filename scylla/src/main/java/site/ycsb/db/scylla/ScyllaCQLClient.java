@@ -51,6 +51,7 @@ import org.slf4j.helpers.MessageFormatter;
 public class ScyllaCQLClient extends DB {
 
   private static BufferedWriter br;
+  private static double start;
 
   static {
     try {
@@ -553,6 +554,7 @@ public class ScyllaCQLClient extends DB {
   public Status insert(String table, String key, Map<String, ByteIterator> values) {
 
     try {
+      start ++;
       Set<String> fields = values.keySet();
       PreparedStatement stmt = INSERT_STMTS.get(fields);
 
@@ -584,8 +586,9 @@ public class ScyllaCQLClient extends DB {
           stmt = prevStmt;
         }
       }
-
-      br.write(key+"\n");
+      if (start > 900000000) {
+        br.write(key + "\n");
+      }
 
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(stmt.getQueryString());
