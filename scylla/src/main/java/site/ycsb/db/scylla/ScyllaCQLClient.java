@@ -26,6 +26,10 @@ import site.ycsb.DB;
 import site.ycsb.DBException;
 import site.ycsb.Status;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,6 +49,16 @@ import org.slf4j.helpers.MessageFormatter;
  * Scylla DB implementation.
  */
 public class ScyllaCQLClient extends DB {
+
+  private static BufferedWriter br;
+
+  static {
+    try {
+      br = new BufferedWriter(new FileWriter("",true));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ScyllaCQLClient.class);
 
@@ -570,6 +584,8 @@ public class ScyllaCQLClient extends DB {
           stmt = prevStmt;
         }
       }
+
+      br.write(key+"\n");
 
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(stmt.getQueryString());
