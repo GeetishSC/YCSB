@@ -26,7 +26,6 @@ import site.ycsb.DB;
 import site.ycsb.DBException;
 import site.ycsb.Status;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -55,7 +54,7 @@ public class ScyllaCQLClient extends DB {
 
   static {
     try {
-      br = new BufferedWriter(new FileWriter("",true));
+      br = new BufferedWriter(new FileWriter("", true));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -554,7 +553,7 @@ public class ScyllaCQLClient extends DB {
   public Status insert(String table, String key, Map<String, ByteIterator> values) {
 
     try {
-      start ++;
+      start++;
       Set<String> fields = values.keySet();
       PreparedStatement stmt = INSERT_STMTS.get(fields);
 
